@@ -8,29 +8,29 @@ import (
 	"time"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
-type Terminal struct {
+type Term struct {
 	Session *ssh.Session
 	stdout  io.Reader
 	stdin   io.Writer
 	stderr  io.Reader
 }
 
-func (s *Terminal) interactiveSession() error {
+func (s *Term) interactiveSession() error {
 	fd := int(os.Stdin.Fd())
-	if !terminal.IsTerminal(fd) {
+	if !term.IsTerminal(fd) {
 		return fmt.Errorf("%s is not a terminal", runtime.GOOS)
 	}
 
-	state, err := terminal.MakeRaw(fd)
+	state, err := term.MakeRaw(fd)
 	if err != nil {
 		return fmt.Errorf("terminal status: %w", err)
 	}
-	defer terminal.Restore(fd, state)
+	defer term.Restore(fd, state)
 
-	width, height, err := terminal.GetSize(fd)
+	width, height, err := term.GetSize(fd)
 	if err != nil {
 		return fmt.Errorf("terminal size: %w", err)
 	}
@@ -93,7 +93,7 @@ func Run(addr string) error {
 	}
 	defer session.Close()
 
-	term := Terminal{
+	term := Term{
 		Session: session,
 	}
 
