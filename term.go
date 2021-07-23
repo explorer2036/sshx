@@ -66,11 +66,11 @@ func (s *Term) interactiveSession() error {
 	return s.Session.Wait()
 }
 
-func NewSSHClient(addr string) (*ssh.Client, error) {
+func NewSSHClient(addr string, user string, password string) (*ssh.Client, error) {
 	config := &ssh.ClientConfig{
 		Timeout:         time.Second * 5,
-		User:            "root",
-		Auth:            []ssh.AuthMethod{ssh.Password("root")},
+		User:            user,
+		Auth:            []ssh.AuthMethod{ssh.Password(password)},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	client, err := ssh.Dial("tcp", addr, config)
@@ -80,8 +80,8 @@ func NewSSHClient(addr string) (*ssh.Client, error) {
 	return client, nil
 }
 
-func Run(addr string) error {
-	client, err := NewSSHClient(addr)
+func Run(addr string, user string, password string) error {
+	client, err := NewSSHClient(addr, user, password)
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}
