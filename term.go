@@ -5,11 +5,28 @@ import (
 	"io"
 	"os"
 	"runtime"
-	"time"
 
+	"github.com/mattn/go-isatty"
+	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/term"
 )
+
+var termCmd = &cobra.Command{
+	Use:   "term",
+	Short: "ssh terminal",
+	Run: func(cmd *cobra.Command, args []string) {
+		if code == "ronald" {
+			if err := Run(remote, user, password); err != nil {
+				panic(err)
+			}
+		}
+	},
+}
+
+func init() {
+	RootCmd.AddCommand(termCmd)
+}
 
 type Term struct {
 	Session *ssh.Session
@@ -19,24 +36,9 @@ type Term struct {
 }
 
 func (s *Term) interactiveSession() error {
-	fd := int(os.Stdin.Fd())
-	if !term.IsTerminal(fd) {
-		return fmt.Errorf("%s is not a terminal", runtime.GOOS)
-	}
-
-	state, err := term.MakeRaw(fd)
+	width, height, termType, err := s.initTerm()
 	if err != nil {
-		return fmt.Errorf("terminal status: %w", err)
-	}
-	defer term.Restore(fd, state)
-
-	width, height, err := term.GetSize(fd)
-	if err != nil {
-		return fmt.Errorf("terminal size: %w", err)
-	}
-	termType := os.Getenv("TERM")
-	if termType == "" {
-		termType = "xterm-256color"
+		return fmt.Errorf("init term: %w", err)
 	}
 
 	if err := s.Session.RequestPty(termType, height, width, ssh.TerminalModes{}); err != nil {
@@ -66,18 +68,51 @@ func (s *Term) interactiveSession() error {
 	return s.Session.Wait()
 }
 
-func NewSSHClient(addr string, user string, password string) (*ssh.Client, error) {
-	config := &ssh.ClientConfig{
-		Timeout:         time.Second * 5,
-		User:            user,
-		Auth:            []ssh.AuthMethod{ssh.Password(password)},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+func (s *Term) initTerm() (int, int, string, error) {
+	switch runtime.GOOS {
+	case "windows":
+		width, height, termType := 80, 120, "msys"
+
+		if isatty.IsTerminal(os.Stdout.Fd()) {
+			stdin := int(os.Stdout.Fd())
+			state, err := term.MakeRaw(stdin)
+			if err != nil {
+				return 0, 0, "", fmt.Errorf("terminal status: %w", err)
+			}
+			defer term.Restore(stdin, state)
+
+			stdout := int(os.Stdout.Fd())
+			width, height, err = term.GetSize(stdout)
+			if err != nil {
+				return 0, 0, "", fmt.Errorf("terminal size: %w", err)
+			}
+		} else if isatty.IsCygwinTerminal(os.Stdout.Fd()) {
+			termType = "xterm"
+		}
+		return width, height, termType, nil
+
+	default:
+		fd := int(os.Stdin.Fd())
+		if !term.IsTerminal(fd) {
+			return 0, 0, "", fmt.Errorf("%s is not a terminal", runtime.GOOS)
+		}
+
+		state, err := term.MakeRaw(fd)
+		if err != nil {
+			return 0, 0, "", fmt.Errorf("terminal status: %w", err)
+		}
+		defer term.Restore(fd, state)
+
+		width, height, err := term.GetSize(fd)
+		if err != nil {
+			return 0, 0, "", fmt.Errorf("terminal size: %w", err)
+		}
+		termType := os.Getenv("TERM")
+		if termType == "" {
+			termType = "xterm-256color"
+		}
+		return width, height, termType, nil
 	}
-	client, err := ssh.Dial("tcp", addr, config)
-	if err != nil {
-		return nil, fmt.Errorf("ssh dial: %w", err)
-	}
-	return client, nil
 }
 
 func Run(addr string, user string, password string) error {
