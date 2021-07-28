@@ -14,6 +14,7 @@ func NewSSHClient(addr string, user string, password string) (*ssh.Client, error
 		Auth:            []ssh.AuthMethod{ssh.Password(password)},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
+
 	client, err := ssh.Dial("tcp", addr, config)
 	if err != nil {
 		return nil, fmt.Errorf("ssh dial: %w", err)

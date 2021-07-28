@@ -11,6 +11,9 @@ var scriptCmd = &cobra.Command{
 	Short: "ssh script",
 	Run: func(cmd *cobra.Command, args []string) {
 		if code == "ronald" {
+			if err := readPassword(); err != nil {
+				panic(err)
+			}
 			if err := Exec(remote, user, password, script); err != nil {
 				panic(err)
 			}
