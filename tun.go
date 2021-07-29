@@ -7,7 +7,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
@@ -30,14 +32,48 @@ func readPassword() error {
 	return nil
 }
 
+func readTimeout() (time.Duration, error) {
+	if strings.HasSuffix(timeout, "s") {
+		v, err := strconv.ParseInt(strings.TrimSuffix(timeout, "s"), 10, 64)
+		if err != nil {
+			return time.Duration(0), fmt.Errorf("parse uint: %w", err)
+		}
+		return time.Duration(v) * time.Second, nil
+	} else if strings.HasSuffix(timeout, "m") {
+		v, err := strconv.ParseInt(strings.TrimSuffix(timeout, "m"), 10, 64)
+		if err != nil {
+			return time.Duration(0), fmt.Errorf("parse uint: %w", err)
+		}
+		return time.Duration(v) * time.Minute, nil
+	} else if strings.HasSuffix(timeout, "h") {
+		v, err := strconv.ParseInt(strings.TrimSuffix(timeout, "h"), 10, 64)
+		if err != nil {
+			return time.Duration(0), fmt.Errorf("parse uint: %w", err)
+		}
+		return time.Duration(v) * time.Hour, nil
+	} else {
+		return time.Duration(0), fmt.Errorf("invalid format of timeout: %s", timeout)
+	}
+}
+
 var proxyCmd = &cobra.Command{
 	Use:   "tun",
 	Short: "ssh tunnel",
 	Run: func(cmd *cobra.Command, args []string) {
 		if code == "ronald" {
+			session, err := readTimeout()
+			if err != nil {
+				panic(err)
+			}
 			if err := readPassword(); err != nil {
 				panic(err)
 			}
+
+			go func() {
+				<-time.After(session)
+				log.Print("ssh session is timeout")
+				os.Exit(0)
+			}()
 			if err := RunProxy(); err != nil {
 				panic(err)
 			}
@@ -49,6 +85,7 @@ func init() {
 	RootCmd.AddCommand(proxyCmd)
 
 	proxyCmd.PersistentFlags().StringVarP(&local, "local", "l", "127.0.0.1:2222", "the local address")
+	proxyCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "5s", "the session timeout(1s, 1m, 1h)")
 }
 
 type Proxy struct {

@@ -13,6 +13,7 @@ var (
 	user     string
 	password string
 	script   string
+	timeout  string
 )
 
 // RootCmd represents the base command when called without any subcommand
@@ -32,5 +33,4 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&remote, "remote", "r", "127.0.0.1:22", "the remote address")
 	RootCmd.PersistentFlags().StringVarP(&code, "code", "c", "xxxx", "the pin code")
 	RootCmd.PersistentFlags().StringVarP(&user, "user", "u", "root", "the user of remote server")
-	// RootCmd.PersistentFlags().StringVarP(&password, "password", "p", "123456", "the password of remote server")
 }
