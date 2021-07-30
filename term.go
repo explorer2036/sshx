@@ -16,10 +16,11 @@ var termCmd = &cobra.Command{
 	Use:   "term",
 	Short: "ssh terminal",
 	Run: func(cmd *cobra.Command, args []string) {
+		if err := readPinCode(); err != nil {
+			panic(err)
+		}
+
 		if code == "ronald" {
-			if err := readPassword(); err != nil {
-				panic(err)
-			}
 			if err := Run(remote, user, password); err != nil {
 				panic(err)
 			}
