@@ -41,8 +41,7 @@ var proxyCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(proxyCmd)
 
-	proxyCmd.PersistentFlags().StringVarP(&local, "local", "l", "127.0.0.1:2222", "the local address")
-	proxyCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "5s", "the session timeout(1s, 1m, 1h)")
+	proxyCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "30s", "the session timeout(1s, 1m, 1h)")
 }
 
 type Proxy struct {
@@ -54,7 +53,7 @@ func RunProxy() error {
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}
-	log.Printf("ssh connected to %s", remote)
+	log.Print("ssh connected to remote")
 
 	defer client.Close()
 
