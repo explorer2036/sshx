@@ -17,7 +17,8 @@ func readPinCode() error {
 	if err != nil {
 		return fmt.Errorf("read string: %w", err)
 	}
-	code = strings.TrimSuffix(text, "\n")
+	code = strings.Replace(text, "\r", "", -1)
+	code = strings.Replace(code, "\n", "", -1)
 
 	return nil
 }
