@@ -21,9 +21,6 @@ var termCmd = &cobra.Command{
 		}
 
 		if input == "ronald" {
-			if tunnel {
-				remote = local
-			}
 			if err := Run(remote); err != nil {
 				panic(err)
 			}
@@ -33,8 +30,6 @@ var termCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(termCmd)
-
-	termCmd.PersistentFlags().BoolVarP(&tunnel, "tunnel", "e", false, "use local tunnel")
 }
 
 type Term struct {

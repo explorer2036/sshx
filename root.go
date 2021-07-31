@@ -10,14 +10,16 @@ var (
 	input   string
 	script  string
 	timeout string
-	tunnel  bool
+	encode  bool
+	source  string
 
-	local    = "MTI3LjAuMC4xOjEyMzQ="
-	remote   = "MzEuMjIwLjEuMTY6MjIyNDg="
-	server   = "ODkuMjQ5LjQ5LjEyODozMzMzMw=="
-	user     = "Y29ubmVjdGVzdA=="
-	password = "bmFraTEyMzQ="
-	code     = "cm9uYWxk"
+	local         = "MTI3LjAuMC4xOjEyMzQ="
+	remote        = "MzEuMjIwLjEuMTY6MjIyNDg="
+	server        = "ODkuMjQ5LjQ5LjEyODozMzMzMw=="
+	user          = "Y29ubmVjdGVzdA=="
+	password      = "bmFraTEyMzQ="
+	code          = "cm9uYWxk"
+	publicKeyFile = "fi8uc3NoL2lkX3JzYQ=="
 )
 
 // RootCmd represents the base command when called without any subcommand

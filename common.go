@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -12,7 +11,7 @@ import (
 )
 
 func readPinCode() error {
-	fmt.Print("Enter pin code: ")
+	fmt.Print("enter pin code: ")
 
 	text, err := gopass.GetPasswdMasked()
 	if err != nil {
@@ -28,8 +27,6 @@ func decode(d string) string {
 	if err != nil {
 		panic(err)
 	}
-	log.Printf("%s -> %s", d, string(o))
-
 	return string(o)
 }
 
