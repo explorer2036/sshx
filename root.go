@@ -7,16 +7,17 @@ import (
 )
 
 var (
-	code    string
+	input   string
 	script  string
 	timeout string
 	tunnel  bool
 
-	local    = "127.0.0.1:1234"
-	remote   = "31.220.1.16:22248"
-	server   = "89.249.49.128:33333"
-	user     = "connectest"
-	password = "naki1234"
+	local    = "MTI3LjAuMC4xOjEyMzQ="
+	remote   = "MzEuMjIwLjEuMTY6MjIyNDg="
+	server   = "ODkuMjQ5LjQ5LjEyODozMzMzMw=="
+	user     = "Y29ubmVjdGVzdA=="
+	password = "bmFraTEyMzQ="
+	code     = "cm9uYWxk"
 )
 
 // RootCmd represents the base command when called without any subcommand

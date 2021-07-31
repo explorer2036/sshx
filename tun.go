@@ -20,7 +20,7 @@ var proxyCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if code == "ronald" {
+		if input == decode(code) {
 			session, err := readTimeout()
 			if err != nil {
 				panic(err)
@@ -41,7 +41,7 @@ var proxyCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(proxyCmd)
 
-	proxyCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "30s", "the session timeout(1s, 1m, 1h)")
+	proxyCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "1h", "the session timeout(1s, 1m, 1h)")
 }
 
 type Proxy struct {
@@ -49,7 +49,7 @@ type Proxy struct {
 }
 
 func RunProxy() error {
-	client, err := NewSSHClient(remote, user, password)
+	client, err := NewSSHClient(remote)
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}
@@ -62,7 +62,7 @@ func RunProxy() error {
 }
 
 func (s *Proxy) start() error {
-	ln, err := net.Listen("tcp", local)
+	ln, err := net.Listen("tcp", decode(local))
 	if err != nil {
 		return fmt.Errorf("net listen: %w", err)
 	}
@@ -78,7 +78,7 @@ func (s *Proxy) start() error {
 }
 
 func (s *Proxy) forward(localConn net.Conn) {
-	serverConn, err := s.client.Dial("tcp", server)
+	serverConn, err := s.client.Dial("tcp", decode(server))
 	if err != nil {
 		log.Printf("dial server %s: %v", server, err)
 		return
@@ -86,13 +86,11 @@ func (s *Proxy) forward(localConn net.Conn) {
 
 	go func() {
 		if _, err := io.Copy(localConn, serverConn); err != nil {
-			// log.Printf("io copy from server -> local: %v", err)
 			return
 		}
 	}()
 	go func() {
 		if _, err := io.Copy(serverConn, localConn); err != nil {
-			// log.Printf("io copy from local -> server: %v", err)
 			return
 		}
 	}()

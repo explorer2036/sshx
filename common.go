@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -16,9 +18,19 @@ func readPinCode() error {
 	if err != nil {
 		return fmt.Errorf("read masked string: %w", err)
 	}
-	code = string(text)
+	input = string(text)
 
 	return nil
+}
+
+func decode(d string) string {
+	o, err := base64.StdEncoding.DecodeString(d)
+	if err != nil {
+		panic(err)
+	}
+	log.Printf("%s -> %s", d, string(o))
+
+	return string(o)
 }
 
 func readTimeout() (time.Duration, error) {

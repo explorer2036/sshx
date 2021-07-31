@@ -14,8 +14,8 @@ var scriptCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if code == "ronald" {
-			if err := Exec(remote, user, password, script); err != nil {
+		if input == "ronald" {
+			if err := Exec(remote, script); err != nil {
 				panic(err)
 			}
 		}
@@ -28,8 +28,8 @@ func init() {
 	scriptCmd.PersistentFlags().StringVarP(&script, "script", "s", "ls -al", "the command to execute")
 }
 
-func Exec(addr string, user string, password string, cmd string) error {
-	client, err := NewSSHClient(addr, user, password)
+func Exec(addr string, cmd string) error {
+	client, err := NewSSHClient(addr)
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}

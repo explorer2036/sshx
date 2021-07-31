@@ -20,11 +20,11 @@ var termCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if code == "ronald" {
+		if input == "ronald" {
 			if tunnel {
 				remote = local
 			}
-			if err := Run(remote, user, password); err != nil {
+			if err := Run(remote); err != nil {
 				panic(err)
 			}
 		}
@@ -124,8 +124,8 @@ func (s *Term) initTerm() (int, int, string, error) {
 	}
 }
 
-func Run(addr string, user string, password string) error {
-	client, err := NewSSHClient(addr, user, password)
+func Run(addr string) error {
+	client, err := NewSSHClient(addr)
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}
