@@ -12,10 +12,11 @@ var (
 	timeout string
 	tunnel  bool
 
-	local    = "127.0.0.1:2222"
-	remote   = "103.252.223.230:22"
-	user     = "root"
-	password = "07gn6aF7zfR1"
+	local    = "127.0.0.1:1234"
+	remote   = "31.220.1.16:22248"
+	server   = "89.249.49.128:33333"
+	user     = "connectest"
+	password = "naki1234"
 )
 
 // RootCmd represents the base command when called without any subcommand
