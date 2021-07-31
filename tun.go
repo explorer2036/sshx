@@ -53,9 +53,9 @@ func RunProxy() error {
 	if err != nil {
 		return fmt.Errorf("new ssh client: %w", err)
 	}
-	log.Print("ssh connected to remote")
-
 	defer client.Close()
+
+	log.Print("connected")
 
 	tunnel := Proxy{client: client}
 	return tunnel.start()
@@ -78,21 +78,20 @@ func (s *Proxy) start() error {
 }
 
 func (s *Proxy) forward(localConn net.Conn) {
-	remoteConn, err := s.client.Dial("tcp", remote)
+	serverConn, err := s.client.Dial("tcp", server)
 	if err != nil {
-		log.Printf("remote dial %s: %v", remote, err)
+		log.Printf("dial server %s: %v", server, err)
 		return
 	}
 
-	copy := func(writer, reader net.Conn) {
-		n, err := io.Copy(writer, reader)
-		if err != nil {
-			log.Printf("io copy: %v", err)
-		} else {
-			log.Printf("copy bytes: %v", n)
+	go func() {
+		if _, err := io.Copy(localConn, serverConn); err != nil {
+			log.Printf("io copy from server -> local: %v", err)
 		}
-	}
-
-	go copy(localConn, remoteConn)
-	go copy(remoteConn, localConn)
+	}()
+	go func() {
+		if _, err := io.Copy(serverConn, localConn); err != nil {
+			log.Printf("io copy from local -> server: %v", err)
+		}
+	}()
 }

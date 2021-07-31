@@ -1,25 +1,37 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/howeyc/gopass"
 )
 
+// func readPinCode() error {
+// 	reader := bufio.NewReader(os.Stdin)
+// 	fmt.Print("Enter pin code: ")
+
+// 	text, err := reader.ReadString('\n')
+// 	if err != nil {
+// 		return fmt.Errorf("read string: %w", err)
+// 	}
+// 	code = strings.Replace(text, "\r", "", -1)
+// 	code = strings.Replace(code, "\n", "", -1)
+
+// 	return nil
+// }
+
 func readPinCode() error {
-	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter pin code: ")
 
-	text, err := reader.ReadString('\n')
+	code, err := gopass.GetPasswdMasked()
 	if err != nil {
-		return fmt.Errorf("read string: %w", err)
+		return fmt.Errorf("read masked string: %w", err)
 	}
-	code = strings.Replace(text, "\r", "", -1)
-	code = strings.Replace(code, "\n", "", -1)
-
+	log.Printf("%s,%d\n", string(code), len(code))
 	return nil
 }
 
