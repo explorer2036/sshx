@@ -84,15 +84,17 @@ func (s *Proxy2) forward(localConn net.Conn) {
 		return
 	}
 
-	copy := func(writer, reader net.Conn) {
-		n, err := io.Copy(writer, reader)
+	go func() {
+		_, err := io.Copy(localConn, serverConn)
 		if err != nil {
-			log.Printf("io copy: %v", err)
-		} else {
-			log.Printf("copy bytes: %v", n)
+			log.Fatalf("io copy from server -> local: %v", err)
 		}
-	}
+	}()
 
-	go copy(localConn, serverConn)
-	go copy(serverConn, localConn)
+	go func() {
+		_, err := io.Copy(serverConn, localConn)
+		if err != nil {
+			log.Fatalf("io copy from local -> server: %v", err)
+		}
+	}()
 }
