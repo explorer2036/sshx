@@ -25,8 +25,7 @@ var base64Cmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(base64Cmd)
-
+	// RootCmd.AddCommand(base64Cmd)
 	base64Cmd.PersistentFlags().StringVarP(&source, "source", "s", "hi", "the source string for encoding/decoding")
 	base64Cmd.PersistentFlags().BoolVarP(&encode, "encode", "e", false, "encode or decode")
 }

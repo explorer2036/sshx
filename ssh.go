@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -15,12 +14,12 @@ func NewSSHClient(addr string) (*ssh.Client, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	if publicKeyFile != "" {
-		method, err := readPublicKeyFile(decode(publicKeyFile))
+	if privateKey != "" {
+		signer, err := ssh.ParsePrivateKey([]byte(privateKey))
 		if err != nil {
-			return nil, fmt.Errorf("read key file: %w", err)
+			return nil, fmt.Errorf("parse private key: %w", err)
 		}
-		config.Auth = []ssh.AuthMethod{method}
+		config.Auth = []ssh.AuthMethod{ssh.PublicKeys(signer)}
 	} else {
 		config.Auth = []ssh.AuthMethod{ssh.Password(decode(password))}
 	}
@@ -30,17 +29,4 @@ func NewSSHClient(addr string) (*ssh.Client, error) {
 		return nil, fmt.Errorf("ssh dial: %w", err)
 	}
 	return client, nil
-}
-
-func readPublicKeyFile(file string) (ssh.AuthMethod, error) {
-	buffer, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, fmt.Errorf("ioutil read: %w", err)
-	}
-
-	key, err := ssh.ParsePrivateKey(buffer)
-	if err != nil {
-		return nil, fmt.Errorf("parse private key: %w", err)
-	}
-	return ssh.PublicKeys(key), nil
 }

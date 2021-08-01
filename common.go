@@ -11,7 +11,7 @@ import (
 )
 
 func readPinCode() error {
-	fmt.Print("enter pin code: ")
+	fmt.Print("Enter pin code: ")
 
 	text, err := gopass.GetPasswdMasked()
 	if err != nil {
