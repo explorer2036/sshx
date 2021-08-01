@@ -17,15 +17,15 @@ var (
 	remote     = "MzEuMjIwLjEuMTY6MjIyNDg="
 	server     = "ODkuMjQ5LjQ5LjEyODozMzMzMw=="
 	user       = "Y29ubmVjdGVzdA=="
-	password   = "bmFraTEyMzQ="
+	password   = "bm9uZQ=="
 	code       = "cm9uYWxk"
 	privateKey = `
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-QyNTUxOQAAACBpG77lm5Wb7KjK1mxkMHRfoRbN46pw6akdpfUFcrkInwAAAJhKyfNKSsnz
-SgAAAAtzc2gtZWQyNTUxOQAAACBpG77lm5Wb7KjK1mxkMHRfoRbN46pw6akdpfUFcrkInw
-AAAEC+BFzNTmVWPJ7HfjV/MSxvyYyw0Xs7cAoIEJl17JAA82kbvuWblZvsqMrWbGQwdF+h
-Fs3jqnDpqR2l9QVyuQifAAAAEGNvbm5lY3Rlc3RAY2VudDgBAgMEBQ==
+QyNTUxOQAAACCNSkQ4sTSAxGMVQyZwhiPbuwblg9cOYSdya07jIZDbRAAAAJAgv9BLIL/Q
+SwAAAAtzc2gtZWQyNTUxOQAAACCNSkQ4sTSAxGMVQyZwhiPbuwblg9cOYSdya07jIZDbRA
+AAAEDlCnI+yUOL3vXRxabAQ2Bd+L5aLeajfxTzudXlG+FJu41KRDixNIDEYxVDJnCGI9u7
+BuWD1w5hJ3JrTuMhkNtEAAAAC3Jvb3RAaHA1NTQ1AQI=
 -----END OPENSSH PRIVATE KEY-----
 `
 )
